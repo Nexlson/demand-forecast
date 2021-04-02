@@ -3,3 +3,6 @@
 
 ###
 [Description on dataset](https://medium.com/@boitemailjeanmid/smart-meters-in-london-part1-description-and-first-insights-jean-michel-d-db97af2de71b)
+
+### 
+[ACORN guideline](https://acorn.caci.co.uk/downloads/Acorn-User-guide.pdf)
