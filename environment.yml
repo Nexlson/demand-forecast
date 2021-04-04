@@ -1,4 +1,4 @@
-name: time-series-labs
+name: power-usage-forecasting-labs
 channels:
   - pytorch
   - saravji
