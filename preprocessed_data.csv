@@ -1,4 +1,4 @@
-date,holiday,total power consumption,temp_mean
+date,holiday,total_power_consumption,temp_mean
 2011-11-23,0,90.39,8.46
 2011-11-24,0,213.41,10.12
 2011-11-25,0,303.99,8.48
@@ -827,4 +827,3 @@ date,holiday,total power consumption,temp_mean
 2014-02-25,0,51423.51,5.99
 2014-02-26,0,50943.31,7.16
 2014-02-27,0,51678.19,5.56
-2014-02-28,0,1042.27,2.64
