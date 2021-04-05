@@ -3,11 +3,22 @@
 UK power consumption forecasting using various time-series prediction methods 
 
 ### Environment Setup
-`conda env create -f environment.yml`
+#### setup conda environments
+```
+conda env create -f environment.yml
+```
+### Activate environment
+```
+conda activate power-usage-forecasting-labs
+```
+### Install streamlit
+```
+pip install streamlit
+```
 
 ### Download data
 [Google Drive Link](https://drive.google.com/file/d/152qwa-oTBSXTXHZGJnxmJQ_BQLpQIccr/view?usp=sharing)
-- download and put the csv file into data
+- download the csv file and put into data directory
 
 ### Web Application
 '''https://streamlit.io/''' - Use streamlit.io 
