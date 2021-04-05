@@ -1,6 +1,6 @@
 # UK Power Usage Forecasting
-
-UK power consumption forecasting using various time-series prediction methods 
+### Problem Statement
+Power usage of a city can be influenced by weather and has a seasonal effect. Can we predict accurately the future power usage based on some weather data and power usage in the past?
 
 ### Environment Setup
 #### Setup conda environments
@@ -21,8 +21,11 @@ pip install streamlit
 - download the csv file and put into data directory
 
 ### Web Application
+### Initialize streamlit app 
+```
+streamlit run demo.py
+```
 '''https://streamlit.io/''' - Use streamlit.io 
-
 This system use lstm to predict power usage of a city. User can choose hyperparameter to tune the model
 
 ### Acknowledgments and References
