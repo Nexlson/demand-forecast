@@ -3,7 +3,7 @@
 UK power consumption forecasting using various time-series prediction methods 
 
 ### Environment Setup
-#### setup conda environments
+#### Setup conda environments
 ```
 conda env create -f environment.yml
 ```
