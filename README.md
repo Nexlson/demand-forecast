@@ -2,6 +2,8 @@
 
 UK power consumption forecasting using various time-series prediction methods 
 
+### Environment Setup
+`conda env create -f environment.yml`
 
 ### Download data
 [Google Drive Link](https://drive.google.com/file/d/152qwa-oTBSXTXHZGJnxmJQ_BQLpQIccr/view?usp=sharing)
