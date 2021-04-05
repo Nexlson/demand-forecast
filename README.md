@@ -3,14 +3,14 @@
 UK power consumption forecasting using various time-series prediction methods 
 
 
-### Dowload data
+### Download data
 [Google Drive Link](https://drive.google.com/file/d/152qwa-oTBSXTXHZGJnxmJQ_BQLpQIccr/view?usp=sharing)
 - download and put the csv file into data
 
 ### Web Application
-''' Addd web app url '''
+'''https://streamlit.io/''' - Use streamlit.io 
 
-End with an example of getting some data out of the system or using it for a little demo
+This system use lstm to predict power usage of a city. User can choose hyperparameter to tune the model
 
 ### Acknowledgments and References
 * [Dataset used](https://www.kaggle.com/jeanmidev/smart-meters-in-london)
