@@ -3,7 +3,7 @@
 Power usage of a city can be influenced by weather and has a seasonal effect. Can we predict accurately the future power usage based on some weather data and power usage in the past?
 
 
-### Download data
+### Download Data
 [Google Drive Link](https://drive.google.com/file/d/152qwa-oTBSXTXHZGJnxmJQ_BQLpQIccr/view?usp=sharing)
 - download the csv file and put into data directory
 
@@ -13,18 +13,18 @@ Power usage of a city can be influenced by weather and has a seasonal effect. Ca
 ```
 conda env create -f environment.yml
 ```
-### Activate environment
+### Activate Environment
 ```
 conda activate power-usage-forecasting-labs
 ```
-### Install streamlit
+### Install Streamlit
 ```
 pip install streamlit
 ```
 
 
 ### Web Application
-### Initialize streamlit app 
+### Initialize Streamlit App 
 ```
 streamlit run demo.py
 ```
