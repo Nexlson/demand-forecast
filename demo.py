@@ -37,7 +37,7 @@ st.write(df.head(7))
 
 #side panel
 #data statistical description
-st.sidebar.subheader(' Data Statistics')
+st.sidebar.subheader(' Options')
 st.markdown("Tick the box in side panel to view data statistics.")
 if st.sidebar.checkbox('Statistical Description'):
     st.subheader('Statistical Data Descripition')
@@ -59,12 +59,12 @@ ARIMA, MLP, LSTM (univariate input and single step) and Bi LSTM (multivariate in
 
 We compare the RMSE loss we have for each model and we decided LSTM is our best model.
 
-Click on 'Build Your Own Model' button to train you own model!
+Tick the 'Build Your Own Model' in the side bar to train your own model!
 """)
 
 df= None
 
-if st.sidebar.button('Build Your Own Model'):
+if st.sidebar.checkbox('Build Your Own Model'):
     #LSTM Model
     st.title('Explore More on LSTM Model')
     st.markdown('Select your setting for your model on the side bar. ')
@@ -82,6 +82,7 @@ if st.sidebar.button('Build Your Own Model'):
     st.markdown("To start training, press **'Start Model'**")
 
     st.sidebar.subheader('LSTM Model')
+    st.sidebar.write('Please wait while running.')
     window_size = st.sidebar.slider('Window size', 3, 10, 1)
     hidden_dim = st.sidebar.slider('Hidden dimension', 64, 200, 1)
     num_layers = st.sidebar.slider('Number of layers', 1, 10, 1) #num layers :1 for vanila LSTM, >1 is mean stacked LSTM'
@@ -96,7 +97,7 @@ if st.sidebar.button('Build Your Own Model'):
     if st.sidebar.button('Start Model'):
         st.header('Model started.')
         st.write("Setting:")
-        st.write("window_size: " + str(window_size) +", hidden_dim: " + str(hidden_dim)+" , num_layers: " + str(num_layers)+" , forecast_step"+str(n_step)+", num_epoch"+str(num_epoch))
+        st.write("window_size: " + str(window_size) +", hidden_dim: " + str(hidden_dim)+" , num_layers: " + str(num_layers)+" , forecast_step: "+str(n_step)+", num_epoch: "+str(num_epochs))
 
         ##data preprocessing
         power = pd.read_csv('preprocessed_data.csv')
@@ -227,7 +228,7 @@ if st.sidebar.button('Build Your Own Model'):
                 #Store the averaged value
                 train_loss[t] = epoch_loss_train
                 if t%50 == 0:
-                    st.text('Epoch ' + str(t) + ': ' + str(epoch_loss_train))
+                    st.text('Epoch ' + str(t) + ' train loss: ' + str(epoch_loss_train))
                 
                 #Validate the test data loss
                 with torch.no_grad():
@@ -250,13 +251,13 @@ if st.sidebar.button('Build Your Own Model'):
                     # Store the averaged value 
                     val_loss[t] = epoch_loss_test
                     if t%50 == 0:
-                        st.text('Epoch ' + str(t) + ': ' + str(epoch_loss_test))
+                        st.text('Epoch ' + str(t) + ' test loss: ' + str(epoch_loss_test))
                     
                 
             return train_loss, val_loss
 
         # Start Training
-        st.text('Start trainig.')
+        st.text('Start training.')
         train_loss_power , val_loss_power = training(num_epochs, train_iter_power, test_iter_power, optimizer_power, loss_fn_power, model_power)
 
         #turn off warning
@@ -294,15 +295,20 @@ if st.sidebar.button('Build Your Own Model'):
         y_test_pred_power = scaler_power.inverse_transform(y_test_prediction_power)
         y_test_power = scaler_power.inverse_transform(testY_power)
 
+        import datetime
         #for forecast plot in the next section
-        train_date = pd.date_range(start='2011-11-01', end='2013-06-23')
+        date_all = pd.date_range(start='2011-11-23', end='2014-02-24')
+        train_data_power = pd.DataFrame(train_data_power)
+        train_data_power.index = pd.to_datetime(train_data_power.index)
+        train_data_power.reindex(date_all)
         train = pd.DataFrame(train_data_power)
-        test_date = pd.to_datetime(pd.date_range(start='2013-06-24', end='2014-02-22', freq='D'),unit = 'D')
-        test = pd.DataFrame(y_test_power, index = test_date, columns = ['test']) 
-        forecast = pd.DataFrame(y_test_pred_power, index = test_date, columns = ['forecast'])
+        test_end = (datetime.date(2014,2,24)-datetime.timedelta(days=window_size-2)).strftime("%Y-%m-%d")
+        test_date = pd.date_range(start='2013-06-24', end=test_end, freq='D')
+        test = pd.DataFrame(y_test_power, index = test_date, columns = ['test']).reindex(date_all) 
+        forecast = pd.DataFrame(y_test_pred_power, index = test_date, columns = ['forecast']).reindex(date_all) 
 
-        df = pd.concat([train, test, forecast], axis=1).reindex(pd.date_range(start='2011-11-01', end='2014-02-22')).reset_index()
-        df = df.rename(columns={"total_power_consumption": "test"})
+        df = pd.concat([train, test, forecast], axis=1).reset_index()
+        df = df.rename(columns={"total_power_consumption": "train"})
 
         # Section 4 : Calculate root mean squared error for both train and test data
         trainScore_power = math.sqrt(mean_squared_error(y_train_power, y_train_pred_power))
@@ -334,30 +340,59 @@ if st.sidebar.button('Build Your Own Model'):
                         window_size = window_size,
                         original_plot = True )
 
-st.title('Forecast')
+        import time
+        st.write("View your model's forecast!")
+        progress_bar = st.sidebar.progress(0)
+        status_text = st.sidebar.empty()
+        num_train = 579 - window_size
+
+        chart = st.line_chart(df[:num_train], width=1000, height=500)
+        range_test = int((df.shape[0]-num_train-2*window_size)/5) 
+
+        for i in range(range_test):
+            forecast_rows =df[num_train+i*5:num_train+i*5+5]
+            perc = int(i*100/range_test)
+            status_text.text("%i%%   Complete" %perc)
+            chart.add_rows(forecast_rows)
+            progress_bar.progress(perc)
+            time.sleep(0.05)
+        status_text.text("%i%%   Complete" %100)
+        progress_bar.empty()
+
+        # Streamlit widgets automatically run the script from top to bottom. Since
+        # this button is not connected to any other logic, it just causes a plain
+        # rerun.
+        st.button("Re-run")
+
+else:
+    st.title('Forecast')
+    st.write("Tick the 'Forecast' in the sidebar to view our forecast!")
+
 import time
+if st.sidebar.checkbox('Forecast'):
+    progress_bar = st.sidebar.progress(0)
+    status_text = st.sidebar.empty()
+    if df is None:
+        df = pd.read_csv('forecast.csv')
+     
+    if window_size is None:
+        window_size = 3
+    num_train = 579 - window_size
 
-progress_bar = st.sidebar.progress(0)
-status_text = st.sidebar.empty()
-if df is not None:
-    df = df
-else: df = pd.read_csv('forecast.csv')
+    chart = st.line_chart(df[:num_train], width=1000, height=500)
+    range_test = int((df.shape[0]-num_train-2*window_size)/5) 
 
+    for i in range(range_test):
+        forecast_rows =df[num_train+i*5:num_train+i*5+5]
+        perc = int(i*100/range_test)
+        status_text.text("%i%%   Complete" %perc)
+        chart.add_rows(forecast_rows)
+        progress_bar.progress(perc)
+        time.sleep(0.05)
+    status_text.text("%i%%   Complete" %100)
+    progress_bar.empty()
 
-chart = st.line_chart(df[:579], width=1000, height=500)
-
-for i in range(df.shape[0]):
-  #  test_rows = plot_test[i*5:i*5+5] 
-    forecast_rows =df[579+i*5:579+i*5+5] 
-    status_text.text("%i%% Complete" % i)
-  #  chart.add_rows(test_rows)
-    chart.add_rows(forecast_rows)
-    progress_bar.progress(i)
-    time.sleep(0.05)
-
-progress_bar.empty()
-
-# Streamlit widgets automatically run the script from top to bottom. Since
-# this button is not connected to any other logic, it just causes a plain
-# rerun.
-st.button("Re-run")
+    # Streamlit widgets automatically run the script from top to bottom. Since
+    # this button is not connected to any other logic, it just causes a plain
+    # rerun.
+    st.button("Re-run")
