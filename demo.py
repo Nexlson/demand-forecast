@@ -22,7 +22,7 @@ We would like to forecast the future power usage to help regulators, power suppl
 
 Power usage of a city can be influenced by factors like weather and has a seasonal effect. 
 We have tried on different time series models to predict the future power usage based on the power usage in the past.
-To read more about our models, [click here](https://github.com/Nexlson/power-usage-forecasting).
+To read more about our models in github, [click here](https://github.com/Nexlson/power-usage-forecasting).
 """
 )
 
@@ -63,6 +63,7 @@ Tick the 'Build Your Own Model' in the side bar to train your own model!
 """)
 
 df= None
+window_size = None
 
 if st.sidebar.checkbox('Build Your Own Model'):
     #LSTM Model
@@ -86,10 +87,10 @@ if st.sidebar.checkbox('Build Your Own Model'):
     window_size = st.sidebar.slider('Window size', 3, 10, 1)
     hidden_dim = st.sidebar.slider('Hidden dimension', 64, 200, 1)
     num_layers = st.sidebar.slider('Number of layers', 1, 10, 1) #num layers :1 for vanila LSTM, >1 is mean stacked LSTM'
-    n_step = st.sidebar.slider('Forecasted step', 1, 100, 1)
     num_epochs = st.sidebar.slider('Number of epochs', 200, 1000, 10)
 
     ##define hyperparameter
+    n_step = 1
     split_ratio = 0.70
     batch_size = 10
     #hidden_dim = 64, window_size = 4
@@ -358,7 +359,8 @@ if st.sidebar.checkbox('Build Your Own Model'):
             time.sleep(0.05)
         status_text.text("%i%%   Complete" %100)
         progress_bar.empty()
-
+        st.write('x-axis: Day; y-axis: Total Power Consumption')
+        st.write('Please ignore the Unnamed: 0 and level_0 in the legend')
         # Streamlit widgets automatically run the script from top to bottom. Since
         # this button is not connected to any other logic, it just causes a plain
         # rerun.
@@ -368,31 +370,32 @@ else:
     st.title('Forecast')
     st.write("Tick the 'Forecast' in the sidebar to view our forecast!")
 
-import time
-if st.sidebar.checkbox('Forecast'):
-    progress_bar = st.sidebar.progress(0)
-    status_text = st.sidebar.empty()
-    if df is None:
-        df = pd.read_csv('forecast.csv')
-     
-    if window_size is None:
-        window_size = 3
-    num_train = 579 - window_size
+    import time
+    if st.sidebar.checkbox('Forecast'):
+        progress_bar = st.sidebar.progress(0)
+        status_text = st.sidebar.empty()
+        if df is None:
+            df = pd.read_csv('forecast.csv')
+        
+        if window_size is None:
+            window_size = 3
+        num_train = 579 - window_size
 
-    chart = st.line_chart(df[:num_train], width=1000, height=500)
-    range_test = int((df.shape[0]-num_train-2*window_size)/5) 
+        chart = st.line_chart(df[:num_train], width=1000, height=500)
+        range_test = int((df.shape[0]-num_train-2*window_size)/5) 
 
-    for i in range(range_test):
-        forecast_rows =df[num_train+i*5:num_train+i*5+5]
-        perc = int(i*100/range_test)
-        status_text.text("%i%%   Complete" %perc)
-        chart.add_rows(forecast_rows)
-        progress_bar.progress(perc)
-        time.sleep(0.05)
-    status_text.text("%i%%   Complete" %100)
-    progress_bar.empty()
-
-    # Streamlit widgets automatically run the script from top to bottom. Since
-    # this button is not connected to any other logic, it just causes a plain
-    # rerun.
-    st.button("Re-run")
+        for i in range(range_test):
+            forecast_rows =df[num_train+i*5:num_train+i*5+5]
+            perc = int(i*100/range_test)
+            status_text.text("%i%%   Complete" %perc)
+            chart.add_rows(forecast_rows)
+            progress_bar.progress(perc)
+            time.sleep(0.05)
+        status_text.text("%i%%   Complete" %100)
+        progress_bar.empty()
+        st.write('x-axis: Day; y-axis: Total Power Consumption')
+        st.write('Please ignore the Unnamed: 0 and level_0 in the legend')
+        # Streamlit widgets automatically run the script from top to bottom. Since
+        # this button is not connected to any other logic, it just causes a plain
+        # rerun.
+        st.button("Re-run")
