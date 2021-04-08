@@ -11,7 +11,7 @@ Power usage of a city can be influenced by weather and has a seasonal effect. Ca
 - download the csv file and put into data directory
 
 ### Environment Setup
-#### Setup conda environments
+#### Setup Conda Environments
 ```
 conda env create -f environment.yml
 ```
@@ -23,13 +23,16 @@ conda activate power-usage-forecasting-labs
 ```
 pip install streamlit
 ```
+#### Run Streamlit in Localhost
+```
+streamlit run demo.py
+```
+
 
 ## Streamlit Demo
 ### Web Application
 '''https://share.streamlit.io/xin133/demo_puf/main/demo.py''' - Use streamlit.io <br>
 This system use lstm to predict power usage of a city. User can choose hyperparameter to tune the model.
-
-
 
 ## Acknowledgments and References
 * [Dataset used](https://www.kaggle.com/jeanmidev/smart-meters-in-london)
