@@ -26,7 +26,7 @@ pip install streamlit
 
 ## Streamlit Demo
 ### Web Application
-'''https://share.streamlit.io/xin133/demo_puf/main/demo.py''' - Use streamlit.io 
+'''https://share.streamlit.io/xin133/demo_puf/main/demo.py''' - Use streamlit.io <br>
 This system use lstm to predict power usage of a city. User can choose hyperparameter to tune the model.
 
 
